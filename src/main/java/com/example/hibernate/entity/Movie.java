@@ -1,22 +1,16 @@
 package com.example.hibernate.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 public class Movie {
     @Id
-    @Column(name = "id", nullable = false,columnDefinition = "varchar(36)")
-    @JdbcTypeCode(SqlTypes.VARCHAR)
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
@@ -24,33 +18,21 @@ public class Movie {
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private String name;
 
+    @Column
+    @JdbcTypeCode(SqlTypes.TIMESTAMP)
+    private Date releaseDate;
 
-    @OneToMany(mappedBy = "movie", cascade = {CascadeType.REMOVE}, fetch = FetchType.LAZY)
-    @Fetch(FetchMode.SUBSELECT)
+    @Column
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    private String countryCode;
+
+    @OneToMany(mappedBy = "movie", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Set<Rating> ratings;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "movie_actors",
-            joinColumns = {
-                    @JoinColumn(
-                            name = "movie_id",
-                            referencedColumnName = "id",
-                            columnDefinition = "varchar(36)"
-                    )
-            },
-            inverseJoinColumns = {
-                    @JoinColumn(
-                            name = "actor_id",
-                            referencedColumnName = "id",
-                            columnDefinition = "varchar(36)"
-                    )
-            },
-            uniqueConstraints = @UniqueConstraint(columnNames = {"movie_id", "actor_id"})
-    )
-    private Set<Actor> actors;
-
-
+    @OneToMany(mappedBy = "movie", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<MovieActor> movieActors;
 
     public Movie() {
 
@@ -74,23 +56,23 @@ public class Movie {
     }
 
 
-    public Set<Actor> getActors() {
-        return actors;
-    }
-
-    public void addActor(Actor actor) {
-        if (this.actors == null) {
-            this.actors = new HashSet<>();
+    public void addMovieActor(MovieActor movieActor) {
+        if (this.movieActors == null) {
+            this.movieActors = new HashSet<>();
         }
-        this.actors.add(actor);
+        this.movieActors.add(movieActor);
     }
 
-    public void removeActor(Actor actor) {
-        this.actors.remove(actor);
+    public void removeMovieActor(MovieActor movieActor) {
+        this.movieActors.remove(movieActor);
     }
 
-    public void setActors(Set<Actor> actors) {
-        this.actors = actors;
+    public Set<MovieActor> getMovieActors() {
+        return movieActors;
+    }
+
+    public void setMovieActors(Set<MovieActor> movieActors) {
+        this.movieActors = movieActors;
     }
 
     public Set<Rating> getRatings() {
@@ -114,6 +96,21 @@ public class Movie {
         rating.setMovie(null);
     }
 
+    public Date getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(Date releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -128,13 +125,13 @@ public class Movie {
         return Objects.hash(id);
     }
 
-
     @Override
     public String toString() {
         return "Movie{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", releaseDate=" + releaseDate +
+                ", countryCode='" + countryCode + '\'' +
                 '}';
     }
-
 }

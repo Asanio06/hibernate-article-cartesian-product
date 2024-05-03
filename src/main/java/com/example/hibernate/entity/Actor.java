@@ -11,8 +11,6 @@ import java.util.UUID;
 @Entity
 public class Actor {
     @Id
-    @Column(name = "id", nullable = false,columnDefinition = "varchar(36)")
-    @JdbcTypeCode(SqlTypes.VARCHAR)
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 

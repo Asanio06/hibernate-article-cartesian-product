@@ -1,5 +1,12 @@
 spring:
+  profiles:
+    active: multiple_query
   application:
     name: hibernate
   datasource:
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5435/hibernate-db
+    username: ${DB_USERNAME:hibernate-user}
+    password: ${DB_PASSWORD:Password1234}
+  jpa:
+    hibernate:
+      ddl-auto: create-drop

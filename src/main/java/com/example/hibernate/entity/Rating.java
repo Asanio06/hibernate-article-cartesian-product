@@ -1,6 +1,7 @@
 package com.example.hibernate.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -11,8 +12,6 @@ import java.util.UUID;
 @Entity
 public class Rating {
     @Id
-    @Column(name = "id", nullable = false,columnDefinition = "varchar(36)")
-    @JdbcTypeCode(SqlTypes.VARCHAR)
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
@@ -23,7 +22,8 @@ public class Rating {
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private String comment;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
+    @JsonBackReference
     private Movie movie;
 
 
